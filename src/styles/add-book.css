@@ -1,0 +1,41 @@
+.add-container {
+    width: 45%;
+    height: 45%;
+    transform: translateY(-200%);
+    background-color: var(--box-bg);
+    border-radius: var(--box-border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 3;
+    top: 20%;
+    transition: all .7s ease-in-out;
+    box-shadow: 12px 12px 12px var(--main-bg);
+}
+
+.add-container.show {
+    transform: translateY(0);
+    transition: all .7s ease-in-out;
+}
+
+.book-input {
+    width: 50%;
+    height: 50px;
+    border: none;
+    padding-left: 7px;
+    margin-bottom: 10px;
+    background-color: var(--main-bg);
+    color: #fff;
+}
+
+.submit-book-btn {
+    width: 50%;
+    height: 50px;
+    text-align: center;
+    background-color: var(--main-bg);
+    border: none;
+    color: #fff;
+}
+
