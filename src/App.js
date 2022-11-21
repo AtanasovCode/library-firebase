@@ -19,10 +19,12 @@ import {
   query,
   orderBy,
   where,
+  doc,
 } from 'firebase/firestore';
 import {
   onAuthStateChanged,
   getAuth,
+  updateProfile,
 } from 'firebase/auth'
 
 function App() {
@@ -97,6 +99,25 @@ function App() {
     return parseInt(Math.floor(percent));
   }
 
+  // Update data 
+  const handleUpdate = (id) => {
+    const docRef = doc(db, 'books', id);
+    updateDoc(docRef, {
+      status: "Read"
+     
+    })
+      .then(() => {
+        setBooksRead(booksRead + 1);
+        updateProfile(user, {
+          booksRead: booksRead,
+      })
+      .then(() => {
+          console.log("profile updated");
+          console.log(user.booksRead);
+      })
+      })
+  }
+
   return (
     <div className="app">
       <div className={authContainerClassName}>
@@ -114,6 +135,8 @@ function App() {
             authClassName={authClassName}
             handleAuth={handleAuth}
             handleNewUser={handleNewUser}
+            library={library} 
+            booksRead={booksRead}
           />
           :
           newUser ?
@@ -237,8 +260,8 @@ function App() {
                 </div>
                 <div className="toggle-status">
                   <div className="status-name">Status:</div>
-                  <div className="book-status">
-                    {bookStatus}
+                  <div className="book-status" onClick={() => handleUpdate(book.id)}>
+                    {book.status}
                   </div>
                 </div>
                 <img
@@ -271,19 +294,6 @@ export default App;
     deleteDoc(docRef)
       .then(() => {
         alert("Book Deleted");
-      })
-  }
-
-  // Update data 
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    const docRef = doc(db, 'books', updateId);
-    updateDoc(docRef, {
-      title: updateTitle
-    })
-      .then(() => {
-        setUpdateId("");
-        setUpdateTitle("");
       })
   }
 

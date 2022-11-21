@@ -28,6 +28,7 @@ const SignUp = ({
                 updateProfile(auth.currentUser, {
                     displayName: username,
                     userId: currentUser.uid,
+                    booksRead: "0",
                 })
                 .then(() => {
                     console.log("profile updated");

@@ -1,9 +1,13 @@
 :root {
-    --main-bg: #070D0C;
-    --box-bg: #132125; /*0E181B*/
+    --main-bg: #00111C; /*070D0C*/
+    --box-bg: #00253E;  /*132125 0E181B*/
+    --profile-bg: #00111C90;
+    --accent-color: #007ACC;
     --auth-btn-bg: #F6F4F3;
     --box-border-radius: 25px;
     --box-width: 45%;
+    --progress-bg: #001523;
+    --progress-filled-bg: #003A61;
 }
 
 .app {

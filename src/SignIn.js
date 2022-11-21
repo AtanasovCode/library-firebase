@@ -45,7 +45,7 @@ const SignIn = ({
             </div>
             <form className="auth-form" onSubmit={handleSignIn}>
                 <div className="auth-heading">
-                    <div>Sign Up</div>
+                    <div>Sign In</div>
                 </div>
                 <input
                     type="email"

@@ -6,7 +6,7 @@ const ProgressBar = ({progress}) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "centter",
-        backgroundColor: "white",
+        backgroundColor: "var(--progress-bg)",
         borderRadius: "25px",
     }
 
@@ -15,7 +15,7 @@ const ProgressBar = ({progress}) => {
         height: "75%",
         maxWidth: '99%',
         marginLeft: '2px',
-        backgroundColor: "dodgerblue",
+        backgroundColor: "var(--progress-filled-bg)",
         borderRadius: "25px",
         transition: "all 1s ease-in-out",
     }

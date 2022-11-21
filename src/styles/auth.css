@@ -84,12 +84,12 @@
 }
 
 .icon-close-container:hover {
-    background-color: #F83A3A;
+    background-color: var(--accent-color);
 }
 
 
 .auth-link {
-    color: dodgerblue;
+    color: rgb(117, 186, 254);
     text-decoration: underline;
     cursor: pointer;
     padding-left: 4px;
