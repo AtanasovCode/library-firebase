@@ -1,33 +1,66 @@
 import './styles/add-book.css';
+import close from './images/close.png';
 
 const AddBook = ({
     title,
     setTitle,
     author,
     setAuthor,
-    handleSubmit,
     addBookClass,
+    blurEffect,
+    setBlurEffect,
+    addDoc,
+    serverTimestamp,
+    colRef,
+    handleAddBook,
+    user,
 }) => {
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        addDoc(colRef, {
+            title: e.currentTarget.title.value,
+            author: e.currentTarget.author.value,
+            createdAt: serverTimestamp(),
+            status: "notRead",
+            finishedAt: serverTimestamp(),
+            userId: user.uid,
+        })
+            .then(() => {
+                handleAddBook();
+                setTitle("");
+                setAuthor("");
+            })
+    }
+
     return (
         <form className={addBookClass} onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="title"
-                    value={title}
-                    className="book-input"
-                    placeholder="Book Title"
-                    onChange={(e) => setTitle(e.currentTarget.value)}
-                    required
+            <div className="add-book-close">
+                <img 
+                    src={close}
+                    alt="close icon"
+                    className="close-icon-book"
+                    onClick={handleAddBook}
                 />
-                <input
-                    type="text"
-                    name="author"
-                    value={author}
-                    className="book-input"
-                    placeholder="Book Author"
-                    onChange={(e) => setAuthor(e.currentTarget.value)}
-                    required
-                />
+            </div>
+            <input
+                type="text"
+                name="title"
+                value={title}
+                className="book-input"
+                placeholder="Book Title"
+                onChange={(e) => setTitle(e.currentTarget.value)}
+                required
+            />
+            <input
+                type="text"
+                name="author"
+                value={author}
+                className="book-input"
+                placeholder="Book Author"
+                onChange={(e) => setAuthor(e.currentTarget.value)}
+                required
+            />
             <input
                 type="submit"
                 value="Add Book"

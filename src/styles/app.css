@@ -9,6 +9,7 @@
 .app {
     width: 100%;
     height: min-content;
+    min-height: 100vh;
     background-color: var(--main-bg);
     color: #fff;
     font-family: inherit;
@@ -21,11 +22,19 @@
 .auth-full-container {
     width: 350px;
     height: 100vh;
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
+    z-index: 3;
     display: flex;
-    overflow: hidden;
+    background-color: var(--box-bg);
+    transform: translateX(100%);
+    transition: all .4s ease-in-out;
+}
+
+.auth-full-container.show {
+    transform: translateX(0);
+    transition: all .4s ease-in-out;
 }
 
 .library-container {
@@ -48,10 +57,21 @@
 .profile-icon {
     width: 40px;
     height: 40px;
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 10px;
     cursor: pointer;
+}
+
+.user-name {
+    width: 160px;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: fixed;
+    top: 20px;
+    right: 60px;
 }
 
 .library-heading-container {

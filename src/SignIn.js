@@ -1,7 +1,7 @@
 import './styles/auth.css';
+import close from './images/close.png'
 import {
     signInWithEmailAndPassword,
-    onAuthStateChanged,
 } from 'firebase/auth';
 
 const SignIn = ({
@@ -11,6 +11,8 @@ const SignIn = ({
     setPassword,
     auth,
     authClassName,
+    handleNewUser,
+    handleAuth,
 }) => {
 
     //Sign User In
@@ -20,6 +22,7 @@ const SignIn = ({
             .then((cred) => {
                 //console.log("user logged in");
                 //console.log(cred.user);
+                //handleAuth();
             })
             .catch((err) => {
                 console.log(err.message);
@@ -29,14 +32,24 @@ const SignIn = ({
 
 
     return (
-        <div className={authClassName} id="hide">
-            <div className="sign-in-heading auth-heading">
-                <div>Sign Up</div>
+        <div className={authClassName}>
+            <div
+                className="icon-close-container"
+                onClick={handleAuth}
+            >
+                <img
+                    src={close}
+                    alt="icon icon"
+                    className="icon-close icon"
+                />
             </div>
-            <form className="sign-in-form auth-form" onSubmit={handleSignIn}>
+            <form className="auth-form" onSubmit={handleSignIn}>
+                <div className="auth-heading">
+                    <div>Sign Up</div>
+                </div>
                 <input
                     type="email"
-                    className="sign-in-input input"
+                    className="input"
                     name="email"
                     value={mail}
                     placeholder="example@mail.com"
@@ -44,18 +57,21 @@ const SignIn = ({
                 />
                 <input
                     type="password"
-                    className="sign-in-input input"
+                    className="input"
                     name="password"
                     value={password}
-                    placeholder="password..."
+                    placeholder="Password..."
                     onChange={(e) => setPassword(e.currentTarget.value)}
                 />
-                <div className="sign-in-btn-container auth-btn-container">
-                    <button className="sign-in-btn auth-btn">
+                <div className="auth-btn-container">
+                    <button className="auth-btn">
                         Sign In
                     </button>
-                    <div className="sign-in-text auth-text">
-                        Don't Have An Account? Register Now!
+                    <div className="auth-text" onClick={handleNewUser}>
+                        <span>Don't Have An Account?</span>
+                        <span className="auth-link">
+                            Register Now!
+                        </span>
                     </div>
                 </div>
             </form>
