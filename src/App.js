@@ -5,6 +5,7 @@ import AddBook from './AddBook';
 import UserProfile from './UserProfile';
 import ProgressBar from './ProgressBar';
 import profile from './images/user.png';
+import Loading from './Loading';
 import edit from './images/edit.png';
 import del from './images/delete.png';
 import add from './images/add.png';
@@ -37,6 +38,7 @@ function App() {
   const [regPassword, setRegPassword] = useState("");
   const [regMail, setRegMail] = useState("");
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
   const [authContainerClassName, setAuthContainerClassName] = useState("auth-full-container")
   const [newUser, setNewUser] = useState(true);
   const [userLoggedIn, setUserLoggedIn] = useState();
@@ -56,21 +58,24 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        const q = query(colRef, where("userId", "==", currentUser.uid), orderBy("createdAt", "asc"));
+        const q = query(colRef, where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"));
         onSnapshot(q, (snapshot) => {
           let books = []
           snapshot.docs.forEach((doc) => {
             books.push({ ...doc.data(), id: doc.id });
           })
           setLibrary(books);
+          setLoading(false);
         })
         setUser(currentUser);
         setUserLoggedIn(true);
       } else {
         setUserLoggedIn(false);
+        setLibrary([]);
       }
     })
   }, [])
+
 
   const handleAuth = () => {
     authContainerClassName === "auth-full-container" ? setAuthContainerClassName("auth-full-container show") : setAuthContainerClassName("auth-full-container");
@@ -84,6 +89,26 @@ function App() {
   const handleAddBook = () => {
     addBookClass === "add-container" ? setAddBookClass("add-container show") : setAddBookClass("add-container");
     blurEffect === "library-container" ? setBlurEffect("library-container blur") : setBlurEffect("library-container");
+  }
+
+  const getUserRank = () => {
+    let rank = "Book Newbie";
+    if(booksRead > 1 && booksRead < 3) {
+      rank = "Book Amateur";
+    }else if(booksRead > 3 && booksRead < 5) {
+      rank = "Book Enjoyer";
+    }else if(booksRead >= 5 && booksRead < 10) {
+      rank = "Book Worm";
+    }else if(booksRead >= 10 && booksRead < 15) {
+      rank = "Book Surgeon"
+    }else if(booksRead >= 15 && booksRead < 20) {
+      rank = "Book Magician";
+    }else if(booksRead >= 20 && booksRead < 30) {
+      rank = "Book Master";
+    }else if(booksRead >= 30) {
+      rank = "Book Grandmaster";
+    }
+    return rank;
   }
 
   const calculateProgress = () => {
@@ -103,20 +128,19 @@ function App() {
   const handleUpdate = (id) => {
     const docRef = doc(db, 'books', id);
     updateDoc(docRef, {
-      status: "Read"
-     
+      status: true
     })
-      .then(() => {
-        setBooksRead(booksRead + 1);
-        updateProfile(user, {
-          booksRead: booksRead,
-      })
-      .then(() => {
-          console.log("profile updated");
-          console.log(user.booksRead);
-      })
-      })
   }
+
+  useEffect(() => {
+    let number = 0;
+    library.map((book) => {
+      if (book.status) {
+        number++;
+      }
+    })
+    setBooksRead(number);
+  }, [library])
 
   return (
     <div className="app">
@@ -135,8 +159,9 @@ function App() {
             authClassName={authClassName}
             handleAuth={handleAuth}
             handleNewUser={handleNewUser}
-            library={library} 
+            library={library}
             booksRead={booksRead}
+            getUserRank={getUserRank}
           />
           :
           newUser ?
@@ -249,6 +274,9 @@ function App() {
             <h3>Please Sign In To Add/View Books</h3>
           </div>
           :
+          loading === true ?
+          <Loading />
+          :
           library.map((book) => {
             return (
               <div key={book.id} className="book-container">
@@ -261,7 +289,7 @@ function App() {
                 <div className="toggle-status">
                   <div className="status-name">Status:</div>
                   <div className="book-status" onClick={() => handleUpdate(book.id)}>
-                    {book.status}
+                    {book.status ? "Finished" : "In Progress"}
                   </div>
                 </div>
                 <img

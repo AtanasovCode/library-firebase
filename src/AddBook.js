@@ -22,7 +22,7 @@ const AddBook = ({
             title: e.currentTarget.title.value,
             author: e.currentTarget.author.value,
             createdAt: serverTimestamp(),
-            status: "notRead",
+            status: false,
             finishedAt: serverTimestamp(),
             userId: user.uid,
         })

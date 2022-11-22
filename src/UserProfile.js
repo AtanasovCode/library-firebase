@@ -14,6 +14,7 @@ const UserProfile = ({
     setUserLoggedIn,
     library,
     booksRead,
+    getUserRank,
     user,
 }) => {
 
@@ -29,6 +30,25 @@ const UserProfile = ({
             .catch((err) => {
                 console.log(err.message);
             })
+    }
+
+    const calculateBooksLeft = () => {
+        let rank = getUserRank();
+        if(rank === "Book Newbie") {
+            return 1;
+        }else if(rank === "Book Amateur") {
+            return 3 - booksRead;
+        }else if(rank === "Book Enjoyer") {
+            return 5 - booksRead;
+        }else if(rank === "Book Worm") {
+            return 10 - booksRead;
+        }else if(rank === "Book Surgeon") {
+            return 15 - booksRead;
+        }else if(rank === "Book Magician") {
+            return 20 - booksRead;
+        }else if(rank === "Book Master") {
+            return 30 - booksRead;
+        }
     }
 
 
@@ -61,9 +81,11 @@ const UserProfile = ({
                     <div className="profile-ranking">
                         <div className="profile-rank-container">
                             <div className="rank-text">rank:</div>
-                            <div className="profile-rank">Book Enjoyer</div>
+                            <div className="profile-rank">{getUserRank()}</div>
                         </div>
-                        <div className="rank-up-text">Read 3 books to upgrade ranking</div>
+                        <div className="rank-up-text">
+                            Read <span>{calculateBooksLeft()}</span> more books to upgrade ranking
+                        </div>
                     </div>
                 </div>
             </div>

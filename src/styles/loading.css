@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.child{
+    width: 1vw;
+    height: 1vw;
+    border-radius: 100%;
+    margin: 2vw;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
+    animation: bounce 1.5s 0.5s linear infinite;
+}
+
+.child {
+    background-color: var(--accent-color);
+}
+
+.red {
+    animation-delay: 0.1s;
+}
+
+.blue {
+    animation-delay: 0.2s;
+}
+
+.violet {
+    animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+
+    0%,
+    50%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(0.6);
+    }
+
+    75% {
+        transform: scale(1.4);
+    }
+}
