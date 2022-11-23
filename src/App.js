@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import AddBook from './AddBook';
+import UpdateBook from './UpdateBook';
 import UserProfile from './UserProfile';
 import ProgressBar from './ProgressBar';
 import profile from './images/user.png';
 import Loading from './Loading';
-import edit from './images/edit.png';
-import del from './images/delete.png';
 import add from './images/add.png';
+import slideDown from './images/slide-down.png';
 import './styles/app.css';
 import {
   addDoc,
@@ -21,6 +21,7 @@ import {
   orderBy,
   where,
   doc,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   onAuthStateChanged,
@@ -36,17 +37,20 @@ function App() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [updateId, setUpdateId] = useState();
   const [regMail, setRegMail] = useState("");
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [authContainerClassName, setAuthContainerClassName] = useState("auth-full-container")
   const [newUser, setNewUser] = useState(true);
   const [userLoggedIn, setUserLoggedIn] = useState();
+  const [updatedBook, setUpdatedBook] = useState(false);
   const [addBookClass, setAddBookClass] = useState("add-container");
+  const [updateBookClass, setUpdateBookClass] = useState("update-container")
   const [blurEffect, setBlurEffect] = useState("library-container");
   const [library, setLibrary] = useState([]);
   const [booksRead, setBooksRead] = useState(0);
-  const [bookStatus, setBookStatus] = useState("Not Read");
+  const [bookStatus, setBookStatus] = useState();
   const [authClassName, setAuthClassName] = useState("auth-container");
 
 
@@ -91,21 +95,26 @@ function App() {
     blurEffect === "library-container" ? setBlurEffect("library-container blur") : setBlurEffect("library-container");
   }
 
+  const handleUpdateBook = () => {
+    updateBookClass === "update-container" ? setUpdateBookClass("update-container show") : setUpdateBookClass("update-container");
+    blurEffect === "library-container" ? setBlurEffect("library-container blur") : setBlurEffect("library-container");
+  }
+
   const getUserRank = () => {
     let rank = "Book Newbie";
-    if(booksRead > 1 && booksRead < 3) {
+    if (booksRead >= 1 && booksRead < 3) {
       rank = "Book Amateur";
-    }else if(booksRead > 3 && booksRead < 5) {
+    } else if (booksRead >= 3 && booksRead < 5) {
       rank = "Book Enjoyer";
-    }else if(booksRead >= 5 && booksRead < 10) {
+    } else if (booksRead >= 5 && booksRead < 10) {
       rank = "Book Worm";
-    }else if(booksRead >= 10 && booksRead < 15) {
+    } else if (booksRead >= 10 && booksRead < 15) {
       rank = "Book Surgeon"
-    }else if(booksRead >= 15 && booksRead < 20) {
+    } else if (booksRead >= 15 && booksRead < 20) {
       rank = "Book Magician";
-    }else if(booksRead >= 20 && booksRead < 30) {
+    } else if (booksRead >= 20 && booksRead < 30) {
       rank = "Book Master";
-    }else if(booksRead >= 30) {
+    } else if (booksRead >= 30) {
       rank = "Book Grandmaster";
     }
     return rank;
@@ -124,13 +133,16 @@ function App() {
     return parseInt(Math.floor(percent));
   }
 
+
   // Update data 
   const handleUpdate = (id) => {
     const docRef = doc(db, 'books', id);
     updateDoc(docRef, {
-      status: true
+      status: true,
+      finishedAt: serverTimestamp(),
     })
   }
+
 
   useEffect(() => {
     let number = 0;
@@ -141,6 +153,13 @@ function App() {
     })
     setBooksRead(number);
   }, [library])
+
+  const timeOptions = {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit"
+  };
+
 
   return (
     <div className="app">
@@ -206,13 +225,26 @@ function App() {
         title={title}
         setTitle={setTitle}
         author={author}
+        setUpdatedBook={setUpdatedBook}
+        updatedBook={updatedBook}
         setAuthor={setAuthor}
-        blurEffect={blurEffect}
-        setBlurEffect={setBlurEffect}
         addDoc={addDoc}
         colRef={colRef}
         user={user}
         serverTimestamp={serverTimestamp}
+      />
+      <UpdateBook
+        title={title}
+        setTitle={setTitle}
+        author={author}
+        setAuthor={setAuthor}
+        bookStatus={bookStatus}
+        setBookStatus={setBookStatus}
+        updateId={updateId}
+        setUpdateId={setUpdateId}
+        handleUpdateBook={handleUpdateBook}
+        db={db}
+        updateBookClass={updateBookClass}
       />
       <div className={blurEffect}>
         <div className="library-heading-container">
@@ -242,7 +274,7 @@ function App() {
           <div className="library-info-container">
             <div className="library-info">
               <div className="sub-heading">
-                Total Books
+                Total
               </div>
               <div className="book-number">
                 {library.length}
@@ -250,7 +282,7 @@ function App() {
             </div>
             <div className="library-info">
               <div className="sub-heading">
-                Books Read
+                Finished
               </div>
               <div className="book-number">
                 {booksRead}
@@ -258,7 +290,7 @@ function App() {
             </div>
             <div className="library-info">
               <div className="sub-heading">
-                Books To Read
+                To Read
               </div>
               <div className="book-number">
                 {library.length - booksRead}
@@ -275,90 +307,82 @@ function App() {
           </div>
           :
           loading === true ?
-          <Loading />
-          :
-          library.map((book) => {
-            return (
-              <div key={book.id} className="book-container">
-                <div className="book-title">
-                  {book.title}
-                </div>
-                <div className="book-author">
-                  {book.author}
-                </div>
-                <div className="toggle-status">
-                  <div className="status-name">Status:</div>
-                  <div className="book-status" onClick={() => handleUpdate(book.id)}>
-                    {book.status ? "Finished" : "In Progress"}
+            <Loading />
+            :
+            library.map((book) => {
+              return (
+                <div
+                  key={book.id}
+                  className="book-container"
+                >
+                  <div className="main-book-info">
+                    <div className="book-title" name="title">
+                      {book.title}
+                    </div>
+                    <div className="book-author">
+                      {book.author}
+                    </div>
+                    <div className="toggle-status">
+                      <div className="status-name">Status:</div>
+                      <div className="book-status" style={{ color: book.status ? "lime" : "#fff" }} onClick={() => handleUpdate(book.id)}>
+                        {book.status ? "Finished" : "In Progress"}
+                      </div>
+                    </div>
+                    <img
+                      src={slideDown}
+                      alt="arrow down"
+                      className="slide-down-icon"
+                      onClick={(e) => { //Change the book-container class && change the icon's class 
+                        if (e.currentTarget.parentNode.parentNode.className === "book-container") {
+                          e.currentTarget.className = "slide-down-icon up"
+                          e.currentTarget.parentNode.parentNode.className = "book-container more-info";
+                        } else {
+                          e.currentTarget.className = "slide-down-icon"
+                          e.currentTarget.parentNode.parentNode.className = "book-container";
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="more-book-info">
+                    <div className="book-date">
+                      Added: {book.createdAt && book.createdAt.toDate().toLocaleDateString("en-US", timeOptions)}
+                    </div>
+                    <div className="book-date">
+                      Finished:  {book.finishedAt && book.finishedAt.toDate().toLocaleDateString("en-US", timeOptions)}
+                    </div>
+                    <div className="book-options-container">
+                      <div
+                        className="edit"
+                        onClick={() => {
+                          setTitle(book.title);
+                          setUpdateId(book.id);
+                          setAuthor(book.author);
+                          setBookStatus(book.status);
+                          setUpdateId(book.id);
+                          handleUpdateBook();
+                        }}
+                      >
+                        edit
+                      </div>
+                      <div
+                        className="delete"
+                        onClick={() => {
+                          deleteDoc(doc(db, 'books', book.id))
+                            .then(() => {
+                              console.log("Deleted Book");
+                            })
+                        }}
+                      >
+                        delete
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <img
-                  src={edit}
-                  alt="edit icon"
-                  className="icon edit-icon"
-                />
-                <img
-                  src={del}
-                  alt="delete icon"
-                  className="icon delete-icon"
-                  onClick={() => console.log("click")}
-                />
-              </div>
-            );
-          })}
+              );
+            })}
       </div>
     </div>
   );
 }
 
 export default App;
-
-/*
-
-  const handleDelete = (e) => {
-    e.preventDefault();
-    const docRef = doc(db, 'books', id);
-
-    deleteDoc(docRef)
-      .then(() => {
-        alert("Book Deleted");
-      })
-  }
-
-<form className="delete" onSubmit={handleDelete}>
-        <label htmlFor="id">Document id:</label>
-        <input
-          type="text"
-          name="id"
-          value={id}
-          onChange={(e) => setId(e.currentTarget.value)}
-        />
-        <button>Delete Book</button>
-      </form>
-      <form className="update" onSubmit={handleUpdate}>
-        <label htmlFor="id">
-          Document Id:
-        </label>
-        <input
-          type="text"
-          value={updateId}
-          name="id"
-          onChange={(e) => setUpdateId(e.currentTarget.value)}
-          required
-        />
-        <label htmlFor="title">
-          New Title
-        </label>
-        <input
-          type="text"
-          value={updateTitle}
-          name="title"
-          onChange={(e) => setUpdateTitle(e.currentTarget.value)}
-          required
-        />
-        <input
-          type="submit"
-          value="Update Book"
-        />
-      </form>
-*/

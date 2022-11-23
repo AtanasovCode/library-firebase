@@ -1,4 +1,5 @@
-.add-container {
+.add-container,
+.update-container {
     width: 45%;
     height: 45%;
     transform: translateY(-200%);
@@ -15,7 +16,8 @@
     box-shadow: 12px 12px 12px var(--main-bg);
 }
 
-.add-container.show {
+.add-container.show,
+.update-container.show {
     transform: translateY(0);
     transition: all .7s ease-in-out;
 }

@@ -1,4 +1,4 @@
-import close from './images/close.png'
+import slide from './images/slide.png'
 import {
     createUserWithEmailAndPassword,
     updateProfile,
@@ -46,11 +46,12 @@ const SignUp = ({
             <div
                 className="icon-close-container"
                 onClick={handleAuth}
+                id="profile-close"
             >
                 <img
-                    src={close}
+                    src={slide}
                     alt="icon icon"
-                    className="icon-close icon"
+                    className="slide"
                 />
             </div>
             <form className="sign-up-form auth-form" onSubmit={handleSignUp}>

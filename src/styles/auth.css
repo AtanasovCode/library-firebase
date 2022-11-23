@@ -83,10 +83,11 @@
     cursor: pointer;
 }
 
-.icon-close-container:hover {
-    background-color: var(--accent-color);
-}
 
+.slide {
+    width: 30px;
+    height: 30px;
+}
 
 .auth-link {
     color: rgb(117, 186, 254);

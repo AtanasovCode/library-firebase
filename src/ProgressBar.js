@@ -17,7 +17,7 @@ const ProgressBar = ({progress}) => {
         marginLeft: '2px',
         backgroundColor: "var(--progress-filled-bg)",
         borderRadius: "25px",
-        transition: "all 1s ease-in-out",
+        transition: "all 2s ease-in-out",
     }
 
     return (

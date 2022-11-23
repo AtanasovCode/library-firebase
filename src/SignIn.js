@@ -1,5 +1,5 @@
 import './styles/auth.css';
-import close from './images/close.png'
+import slide from './images/slide.png';
 import {
     signInWithEmailAndPassword,
 } from 'firebase/auth';
@@ -36,11 +36,12 @@ const SignIn = ({
             <div
                 className="icon-close-container"
                 onClick={handleAuth}
+                id="profile-close"
             >
                 <img
-                    src={close}
-                    alt="icon icon"
-                    className="icon-close icon"
+                    src={slide}
+                    alt="slide"
+                    className="slide"
                 />
             </div>
             <form className="auth-form" onSubmit={handleSignIn}>

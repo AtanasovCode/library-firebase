@@ -1,5 +1,6 @@
 import './styles/add-book.css';
 import close from './images/close.png';
+import { updateDoc, doc, } from 'firebase/firestore';
 
 const AddBook = ({
     title,
@@ -7,8 +8,6 @@ const AddBook = ({
     author,
     setAuthor,
     addBookClass,
-    blurEffect,
-    setBlurEffect,
     addDoc,
     serverTimestamp,
     colRef,
@@ -36,7 +35,7 @@ const AddBook = ({
     return (
         <form className={addBookClass} onSubmit={handleSubmit}>
             <div className="add-book-close">
-                <img 
+                <img
                     src={close}
                     alt="close icon"
                     className="close-icon-book"
